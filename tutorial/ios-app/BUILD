@@ -1,9 +1,27 @@
 load("@rules_cc//cc:defs.bzl", "objc_library")
 load("@build_bazel_rules_apple//apple:ios.bzl", "ios_application")
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library", "swift_proto_library")
+load("@rules_proto//proto:defs.bzl", "proto_library")
 load(
     "@com_github_buildbuddy_io_rules_xcodeproj//xcodeproj:defs.bzl",
     "top_level_target",
     "xcodeproj",
+)
+
+swift_library(
+    name = "UrlGetClassesSwift",
+    srcs = ["UrlGet/Test.swift"],
+    deps = [":foo_swift"],
+)
+
+proto_library(
+    name = "foo",
+    srcs = ["foo.proto"],
+)
+
+swift_proto_library(
+    name = "foo_swift",
+    deps = [":foo"],
 )
 
 objc_library(
@@ -14,6 +32,7 @@ objc_library(
         "UrlGet/main.m",
     ],
     hdrs = glob(["UrlGet/*.h"]),
+    deps = [":UrlGetClassesSwift"]
 )
 
 ios_application(
@@ -37,6 +56,6 @@ xcodeproj(
     project_name = "ios-app",
     tags = ["manual"],
     top_level_targets = [
-        top_level_target(":ios-app", target_environments = ["device", "simulator"]),
+        top_level_target(":ios-app", target_environments = ["simulator"]),
     ],
 )
